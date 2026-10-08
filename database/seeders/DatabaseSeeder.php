@@ -402,9 +402,11 @@ class DatabaseSeeder extends Seeder
         }
 
         // ================= 14. AUDIT TRAIL AWAL =================
+        // Catatan: semua baris pada insert() massal harus punya kolom yang sama.
         AuditLog::insert([
             ['user_id' => $superAdmin->id, 'role_snapshot' => 'super-admin', 'action' => 'SYSTEM_BOOTSTRAP',
-             'auditable_type' => 'System', 'notes' => 'Inisialisasi HealthHub Laravel backend + master data.', 'created_at' => now(), 'updated_at' => now()],
+             'auditable_type' => 'System', 'auditable_id' => null, 'patient_id' => null,
+             'notes' => 'Inisialisasi HealthHub Laravel backend + master data.', 'created_at' => now(), 'updated_at' => now()],
             ['user_id' => $uSarah->id, 'role_snapshot' => 'doctor', 'action' => 'EMR_FINALIZED',
              'auditable_type' => 'MedicalRecord', 'auditable_id' => $mr->id, 'patient_id' => $pBudi->id,
              'notes' => 'EMR-20260915-0042 difinalisasi dr. Sarah Wijaya.', 'created_at' => now(), 'updated_at' => now()],

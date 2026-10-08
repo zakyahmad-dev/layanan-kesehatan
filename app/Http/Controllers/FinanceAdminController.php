@@ -209,7 +209,7 @@ class FinanceAdminController extends ApiController
     {
         $this->requireRole($request, ['admin', 'super-admin']);
         $q = AuditLog::with(['user:id,name', 'patient:id,full_name'])->latest();
-        if ($a = $request->get('action')) $q->where('action', 'ilike', "%{$a}%");
+        if ($a = $request->get('action')) $q->where('action', $this->likeOperator(), "%{$a}%");
         if ($pid = $request->integer('patientId')) $q->where('patient_id', $pid);
         return $this->ok($q->limit(200)->get());
     }
