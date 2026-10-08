@@ -17,9 +17,9 @@ class LookupController extends ApiController
         if ($sid = $request->integer('specializationId')) $q->where('specialization_id', $sid);
         if ($search = $request->get('q')) {
             $q->where(function ($w) use ($search) {
-                $w->where('name', 'ilike', "%{$search}%")
-                  ->orWhereHas('specialization', fn ($s) => $s->where('name', 'ilike', "%{$search}%"))
-                  ->orWhereHas('polyclinic', fn ($p) => $p->where('name', 'ilike', "%{$search}%"));
+                $w->where('name', $this->likeOperator(), "%{$search}%")
+                  ->orWhereHas('specialization', fn ($s) => $s->where('name', $this->likeOperator(), "%{$search}%"))
+                  ->orWhereHas('polyclinic', fn ($p) => $p->where('name', $this->likeOperator(), "%{$search}%"));
             });
         }
 
@@ -70,8 +70,8 @@ class LookupController extends ApiController
     public function articles(Request $request): JsonResponse
     {
         $q = Article::with('author:id,name')->where('status', 'published')->latest('published_at');
-        if (($cat = $request->get('category')) && $cat !== 'Semua') $q->where('category', 'ilike', $cat);
-        if ($s = $request->get('q')) $q->where(fn ($w) => $w->where('title', 'ilike', "%{$s}%")->orWhere('excerpt', 'ilike', "%{$s}%"));
+        if (($cat = $request->get('category')) && $cat !== 'Semua') $q->where('category', $this->likeOperator(), $cat);
+        if ($s = $request->get('q')) $q->where(fn ($w) => $w->where('title', $this->likeOperator(), "%{$s}%")->orWhere('excerpt', $this->likeOperator(), "%{$s}%"));
         return $this->ok($q->get());
     }
 
